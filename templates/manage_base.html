@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.css">
+    <script src="/static/jquery3_0_0.js"></script>
+    <script src="/static/kindeditor/kindeditor-all.js"></script>
+    <style>
+
+        .header {
+            margin-bottom: 10px;
+            background-color: #e0e0e0;
+        }
+
+        .header a {
+            margin-right: 10px;
+        }
+
+        .left-menu {
+            border: solid 1px #333;
+            padding: 0;
+        }
+
+        .left-menu a {
+            margin-left: 10px;
+
+        }
+
+        .left-nav1 {
+            font-weight: normal;
+            color: #fff;
+            border-bottom: 1px solid #666;
+            border-top: 1px solid #666;
+            background-color: #6b86b3;
+            text-align: center;
+        }
+
+        .left-nav2 {
+            font-weight: normal;
+            border-bottom: 1px solid #666;
+            border-top: 1px solid #666;
+            background-color: #b6c9e7;
+            text-align: center;
+
+        }
+
+        #id_title {
+            width: 100%;
+        }
+
+    </style>
+    <title>Title</title>
+</head>
+<body>
+<div class="header">
+    <div class="row">
+        <div class="col-md-6">
+            <a href="">网站首页</a>
+            <a href="">圆子</a>
+            <a href="">新闻</a>
+            <a href="">博问</a>
+            <a href="">收藏</a>
+            <a href="">搜索</a>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="">{{ request.user }}</a>
+            <a href="">设置</a>
+            <a href="/logout/">退出</a>
+        </div>
+    </div>
+
+</div>
+
+<h2>博客园</h2>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-offset-2">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a href="#">随笔</a></li>
+                <li role="presentation"><a href="#">文章</a></li>
+                <li role="presentation"><a href="#">日记</a></li>
+                <li role="presentation"><a href="#">评论</a></li>
+                <li role="presentation"><a href="#">链接</a></li>
+                <li role="presentation"><a href="#">收藏</a></li>
+                <li role="presentation"><a href="#">相册</a></li>
+                <li role="presentation"><a href="#">文件</a></li>
+                <li role="presentation"><a href="#">设置</a></li>
+                <li role="presentation"><a href="#">选项</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 left-menu">
+            <div class=" left-nav1">操作</div>
+            <p><a href="/blog/backend/addArticle/">添加新随笔</a></p>
+            <p><a href="">草稿箱</a></p>
+            <p><a href="">设置默认编辑器</a></p>
+            <p><a href="">博客签名</a></p>
+            <div class="left-nav2">分类</div>
+            <p><a href="">[ 编辑分类 ]</a></p>
+            <p><a href="">[ 未分类 ]</a></p>
+
+            <div>
+
+                {% for category in category_list %}
+                    <p>
+                        <a href="#">{{ category.0 }}({{ category.1 }})</a>
+                    </p>
+                {% endfor %}
+
+
+            </div>
+
+        </div>
+        <div class="col-md-10">
+
+            {% block manage_content %}
+                <table class=" table table-border table-hover">
+                    <thead>
+                    <tr>
+                        <th>标题</th>
+                        <th>评论数</th>
+                        <th>阅读数</th>
+                        <th>操作</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for article in article_list %}
+                        <tr>
+                            <td>{{ article.title }}</td>
+                            <td>{{ article.comment_count }}</td>
+                            <td>{{ article.read_count }}</td>
+                            <td><a href="">编辑</a></td>
+                            <td><a href="">删除</a></td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            {% endblock %}
+
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+</html>

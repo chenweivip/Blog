@@ -1,0 +1,292 @@
+{% load my_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/user_home_style/{{ current_user.blog.theme }}">
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .header {
+            width: 100%;
+            height: 44px;
+        {#            background-color: #336699;#} position: relative;
+        {#            float: left;#}
+
+        }
+
+        .header .container a {
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+            margin: auto 10px;
+        {#             padding-top: 10px;#}
+
+        }
+
+        .header_info {
+            position: absolute;
+            right: 102px;
+            top: 10px;
+        }
+
+        .menu {
+            margin-top: 30px;
+        }
+
+        .content {
+
+            position: relative;
+
+        }
+
+        .info {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .content_main {
+            margin-top: 30px;
+        }
+
+        .article_desc {
+            margin-top: 20px;
+        }
+
+        .col-md-3 {
+            padding-left: 0;
+        }
+
+        .footer {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .header .container a {
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+            margin: auto 10px;
+
+        }
+
+        .col-md-3 {
+            padding-left: 0;
+        }
+
+        .footer {
+            color: #666;
+            font-size: 12px;
+        }
+
+        #div_digg {
+            float: right;
+            margin-bottom: 10px;
+            margin-right: 30px;
+            font-size: 12px;
+            width: 125px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .diggit {
+            float: left;
+            width: 46px;
+            height: 52px;
+            background: url(/static/img/upup.gif) no-repeat;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 2px;
+            padding-top: 5px;
+        }
+
+        .buryit {
+            float: right;
+            margin-left: 20px;
+            width: 46px;
+            height: 52px;
+            background: url(/static/img/downdown.gif) no-repeat;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 2px;
+            padding-top: 5px;
+        }
+
+        .flush .a {
+            margin-left: 790px;
+        }
+
+        .sub_info a {
+            font-size: 12px;
+            text-decoration: underline;
+
+        }
+
+        #tbCommentAuthor {
+            background-image: url(/static/img/icon_form.gif);
+            background-repeat: no-repeat;
+            border: 1px solid #ccc;
+            padding: 4px 4px 4px 30px;
+            width: 300px;
+            font-size: 13px;
+        }
+
+        #comment_form_container {
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .comment {
+            border: 1px dashed #dedede;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 14px;
+            width: 948px;
+            color: #6a6352;
+        }
+
+
+
+        .comment_regin a {
+            text-decoration: none;
+            color: #6a6352;
+            font-size: 15px;
+        }
+
+        .media{
+            margin-left: 20px;
+        }
+
+        .media-object{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+
+
+
+
+    </style>
+
+    <script src="/static/jquery3_0_0.js"></script>
+    <script src="/static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/calendar.js"></script>
+
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <div>
+            <a href="/blog/{{ username }}" style="font-size: xx-large">{{ username }} <span
+                    style="font-size: large;color: white">的博客</span></a>
+
+        </div>
+
+        <div class="header_info">
+            <a href="#">新随笔</a><a href="#">订阅</a> <a href="#">联系</a><a href="/blog/manage/">管理</a><a
+                href="/blog/{{ username }}">首页</a><a href="/">博客园</a>
+
+        </div>
+
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 menu">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">公告</h3>
+                </div>
+                <div class="panel-body">
+                    <p><img src="{{ current_user.avatar.url }}"
+                            style="border-radius:50%;  width: 200px; height: 200px;"></p>
+                    <p>昵称：{{ current_user.nickname }}</p>
+                    <p>园龄：{{ current_user.create_time }}</p>
+                    <div id='calen'></div>
+
+                    {#                    <p>粉丝：{{ current_user.create_time }}</p>#}
+                    {#                    <p>关注：{{ current_user.create_time }}</p>#}
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">我的标签</h3>
+                </div>
+                <div class="panel-body">
+                    {% for foo in tag %}
+                        <p><a href="/blog/{{ username }}/tag/{{ foo.0 }}">{{ foo.0 }}({{ foo.1 }})</a></p>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">随笔分类</h3>
+                </div>
+
+                <div class="panel-body">
+                    {% for foo in current_user.blog.category_set.all %}
+                        <p>
+                            <a href="/blog/{{ username }}/category/{{ foo.title }}">{{ foo.title }}({{ foo.article_set.count }})</a>
+                        </p>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">随笔档案</h3>
+                </div>
+                <div class="panel-body">
+                    {% for foo in data %}
+                        <p><a href="/blog/{{ username }}/date/{{ foo.0 }}">{{ foo.0 }}({{ foo.1 }})</a></p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 content">
+            <div class="info">随笔-123 &nbsp;&nbsp;&nbsp;文章-121&nbsp;&nbsp;&nbsp;评论-323</div>
+            <div class="content_main">
+                {% block content %}
+                    {#            主页显示#}
+
+                    {% for foo in article_list %}
+                        <div class="article_title">
+                            <h4><a href="/blog/{{ username }}/p/{{ foo.nid }}"> {{ foo }}</a></h4>
+                        </div>
+
+                        <div class="article_desc">
+                            {{ foo.desc }}
+                        </div>
+                        <div class="footer pull-right">
+                            posted &nbsp;&nbsp;&nbsp;@&nbsp;&nbsp;&nbsp;{{ foo.create_time|date:'Y-m-d H:i' }}&nbsp;&nbsp;&nbsp;{{ username }}
+                            &nbsp;&nbsp;&nbsp;阅读({{ foo.read_count }})&nbsp;&nbsp;&nbsp;评论({{ foo.comment_count }}) <a
+                                href="#">编辑</a>
+                        </div>
+                        <hr>
+                    {% endfor %}
+
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+    //只需实例化calendar实例即可，传入的参数为html对象的id，举个例子如下
+    new calendar('calen');
+</script>
+</html>

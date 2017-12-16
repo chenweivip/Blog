@@ -1,0 +1,51 @@
+{% extends 'manage_base.html' %}
+
+{% block manage_content %}
+
+
+    <form action="/blog/backend/addArticle/" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="title">标题：</label>
+            <p>{{ article_form.title }}</p>
+        </div>
+        <div>
+            <label for="title">内容：</label>
+            <p>
+                {{ article_form.content }}
+
+            </p>
+        </div>
+        <p><input type="submit" value="submit"></p>
+
+
+    </form>
+
+
+
+
+<script>
+KindEditor.ready(function (K) {
+    window.editor = K.create('#id_content', {
+        width: '1110px',
+        height: '600px',
+        resizeType: 0,//0是不可调节长宽
+        uploadJson: '/uploadFile/',  //指定上传文件的服务器端程序。
+        extraFileUploadParams: {   //上传图片、Flash、视音频、文件时，支持添加别的参数一并传到服务器。
+            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+        }
+
+    });
+
+
+     })
+
+
+
+</script>
+
+
+
+
+
+{% endblock %}

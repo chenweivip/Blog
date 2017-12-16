@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>login</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.min.css">
+
+
+</head>
+<body>
+
+{#<form method="post" novalidate>#}
+
+<img src="/static/1.png" alt="">
+<div class="container" style="margin-top: 100px">
+    {#<div class="row">#}
+    <form class="form-horizontal" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username" class="col-sm-2 control-label">用户名</label>
+            <div class="col-md-6">{{ form.username }} <span class="s1 " style="color: #a94442"></span></div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_password" class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-6">
+                {{ form.password }} <span class="s2" style="color: #a94442"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="id_validcode" class="col-sm-2 control-label">验证码</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="id_validcode" placeholder="验证码">
+            </div>
+            <div class="col-sm-6">
+                <img src="/validcode/"  id="validcode" alt="" width="120px" height="34px" style="margin-left: -29px " > <span class="s4"
+                                                                                                             style="color: #a94442"></span>
+            </div>
+        </div>
+    </form>
+
+    {#    <p>密码：{{ form.password }} <span class="s2"></span></p>#}
+    {#<p><input type="submit" value="提交">{{ error_msg }} </p>#}
+{#    <p>#}
+{#        <button class="btn btn-success" style="margin-left: 192px">提交</button></p>#}
+
+    <div class="popup">
+
+    <input class="btn btn-success" id="popup-submit" type="submit" value="提交" style="margin-left: 192px"><span class="s3" style="color: #a94442"></span>
+
+    <div id="popup-captcha"></div>
+</div>
+
+</div>
+
+
+<script src="/static/jquery3_0_0.js"></script>
+<script src="/static/jquery-cookie/jquery.cookie.js"></script>
+<script src="http://code.jquery.com/jquery-1.12.3.min.js"></script>
+
+<script src="http://static.geetest.com/static/tools/gt.js"></script>
+
+
+<script>
+    $('#validcode').click(function () {
+         $('#validcode').attr('src','/validcode/?flag='+Math.random())
+    });
+
+
+
+    var handlerPopup = function (captchaObj) {
+        $("#popup-submit").click(function () {
+            captchaObj.show();
+        });
+
+        // 成功的回调
+        captchaObj.onSuccess(function () {
+            var validate = captchaObj.getValidate();
+            $.ajax({
+                url: "/pc-geetest/ajax_validate", // 进行二次验证
+                type: "post",
+                dataType: "json",
+
+                data: {
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    {#                    username: $('#id_username').val(),#}
+                    {#                    password: $('#id_password').val(),#}
+                    {#                    validcode:$('#id_validcode').val(),#}
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode
+                },
+                success: function (data) {
+                    if (data && (data.status === "success")) {
+
+
+                        $.ajax({
+                            url: '/login/',
+                            type: 'POST',
+                            {#                            headers: {"X-CSRFToken": $.cookie('csrftoken')},#}
+                            data: $("form").serialize(),
+                            data: {
+                                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                                'username': $("[name='username']").val(),
+                                'password': $("[name='password']").val(),
+                                'validcode': $('#id_validcode').val(),
+
+                            },
+                            success: function (data) {
+                                data = JSON.parse(data);
+
+                                $('span').each(function () {
+                                    $(this).text('');
+                                    $(this).parent().removeClass('has-error')
+                                });
+                                $('.s4').parent().prev().removeClass('has-error');
+
+{#                                $('.s1').text('');#}
+{#                                $('.s2').text('');#}
+{#                                $('.s3').text('');#}
+{#                                $('.s4').text('');#}
+                                console.log(data.hasOwnProperty('username'));
+                                console.log(data.hasOwnProperty('password'));
+                                if (data.hasOwnProperty('username')) {
+                                    $('.s1').parent().addClass('has-error');
+                                    $('.s1').text(data['username']);
+
+
+                                }
+                                if (data.hasOwnProperty('password')) {
+                                    $('.s2').parent().addClass('has-error');
+                                    $('.s2').text((data['password']))
+                                }
+                                if (data == 'codeError') {
+                                    {#                                    alert(11)#}
+                                    $('.s4').parent().prev().addClass('has-error');
+                                    $('.s4').text('验证码错误');
+                                }
+                                if (!data['flag']) {
+                                    $('.s3').parent().addClass('has-error');
+                                    $('.s3').text(data['msg'])
+                                }
+
+                                else {
+                                    if (location.href.split('?').length > 1) {
+                                        var url = location.href.split('?')[1].split('=')[1];
+                                        location.href = url
+
+                                    }
+                                    else {
+                                        location.href = '/'
+                                    }
+
+                                }
+                            }
+                        }
+                );
+        }
+    else
+        {
+            $(document.body).html('<h1>登录失败</h1>');
+        }
+    }
+    })
+    ;
+    })
+    ;
+
+    // 将验证码加到id为captcha的元素里
+    captchaObj.appendTo("#popup-captcha");
+    // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    }
+    ;
+    // 验证开始需要向网站主后台获取id，challenge，success（是否启用failback）
+    $.ajax({
+        url: "/pc-geetest/register?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            // 使用initGeetest接口
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+            }, handlerPopup);
+        }
+    });
+</script>
+{#<script>#}
+{#    $(".btn").click(function () {#}
+{##}
+{#        $.ajax({#}
+{#            url: '/login/',#}
+{#            type: 'POST',#}
+{#            headers: {"X-CSRFToken": $.cookie('csrftoken')},#}
+            {#            data: $("form").serialize(),#}
+{#            data: {#}
+                {#                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),#}
+{#                'username': $("[name='username']").val(),#}
+{#                'password': $("[name='password']").val(),#}
+{#                'validcode': $('#id_validcode').val(),#}
+{##}
+{#            },#}
+{#            success: function (data) {#}
+{#                data = JSON.parse(data);#}
+                {#                清空原有的错误信息#}
+{#                $('span').each(function () {#}
+{#                    $(this).text('');#}
+{#                    $(this).parent().removeClass('has-error')#}
+{#                });#}
+{#                $('.s4').parent().prev().removeClass('has-error')#}
+{##}
+{#                $('.s1').text('');#}
+{#                $('.s2').text('');#}
+{#                $('.s3').text('');#}
+{#                $('.s4').text('');#}
+{#                console.log(data.hasOwnProperty('username'));#}
+{#                console.log(data.hasOwnProperty('password'));#}
+{#                if (data.hasOwnProperty('username')) {#}
+{#                    $('.s1').parent().addClass('has-error');#}
+{#                    $('.s1').text(data['username']);#}
+{##}
+{##}
+{#                }#}
+{#                if (data.hasOwnProperty('password')) {#}
+{#                    $('.s2').parent().addClass('has-error');#}
+{#                    $('.s2').text((data['password']))#}
+{#                }#}
+{#                if (data == 'codeError') {#}
+{#                    alert(11)#}
+{#                    $('.s4').parent().prev().addClass('has-error');#}
+{#                    $('.s4').text('验证码错误');#}
+{#                }#}
+{#                if (!data['flag']) {#}
+{#                    $('.s3').parent().addClass('has-error');#}
+{#                    $('.s3').text(data['msg'])#}
+{#                }#}
+{##}
+{#                else {#}
+{#                    location.href = '/index/'#}
+{#                }#}
+{#            }#}
+{#        })#}
+{#    });#}
+{#</script>#}
+</body>
+
+
+</html>
